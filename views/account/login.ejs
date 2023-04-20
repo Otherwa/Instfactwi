@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Login Page</title>
+</head>
+
+<body>
+    <% if (success_msg) { %>
+        <div class="alert alert-success">
+            <%= success_msg %>
+        </div>
+        <% } %>
+            <div style="max-width: 500px; margin: 0 auto; text-align: center;">
+                <h1 style="font-size: 2.5rem; margin-bottom: 1rem;">Login</h1>
+                <form style="display: flex; flex-direction: column; align-items: center;">
+                    <label for="username" style="margin-bottom: 0.5rem;">Username</label>
+                    <input type="text" id="username" name="username"
+                        style="padding: 0.5rem; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 1rem; width: 100%;"
+                        required>
+                    <label for="password" style="margin-bottom: 0.5rem;">Password</label>
+                    <input type="password" id="password" name="password"
+                        style="padding: 0.5rem; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 1rem; width: 100%;"
+                        required>
+                    <button type="submit"
+                        style="padding: 0.5rem 1rem; border-radius: 5px; border: none; background-color: #4CAF50; color: white;">Login</button>
+                </form>
+            </div>
+</body>
+
+</html>

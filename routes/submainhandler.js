@@ -1,4 +1,5 @@
 const express = require('express')
+const User = require('../models/user')
 const router = express.Router()
 
 // entry points
@@ -8,7 +9,7 @@ router.get('/', (req, res) => {
 
 router.route('/login')
     .get((req, res) => {
-        req.render('index');
+        res.render('account/login');
     })
     .post((req, res) => {
 
@@ -16,10 +17,11 @@ router.route('/login')
 
 router.route('/register')
     .get((req, res) => {
-        req.render('index');
+        res.render('account/register');
     })
     .post(async (req, res) => {
         try {
+            console.log(req.body)
             // Create a new user with the provided credentials
             const newUser = new User({
                 username: req.body.username,
@@ -29,7 +31,8 @@ router.route('/register')
             // Save the user to the database
             await newUser.save();
 
-            res.send('User registered successfully!');
+            req.flash('success_msg', 'You are now registered and can log in');
+            res.redirect('/register')
         } catch (error) {
             console.error(error);
             res.status(500).send('Unable to register user. Please try again later.');
