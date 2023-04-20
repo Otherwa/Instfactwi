@@ -1,42 +1,30 @@
-const express = require('express');
-const multer = require('multer');
-const path = require('path');
 
-const app = express();
+require("dotenv").config();
+const RouterHandler = require('./routes/mainhandler')
+const express = require('express')
+const main = require('./routes/submainhandler')
+const mongoose = require('mongoose')
+const app = express()
+const port = process.env.PORT || 4000;
 
-// configs
+// config
+mongoose.connect(process.env.CON, { useNewUrlParser: true, useUnifiedTopology: true }).then(
+    () => { console.log("Connected"); /** ready to use. The `mongoose.connect()` promise resolves to mongoose instance. */ },
+    err => { console.log("Error") /** handle initial connection error */ }
+);
+
+
 app.set('view engine', 'ejs');
+app.set('json spaces', 2)
+app.use((req, res, next) => {
+    console.log('Time: ', new Date().toUTCString())
+    next()
+})
 
-// Set up storage for uploaded files
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'uploads/');
-    },
-    filename: function (req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-    }
-});
+// routes
+app.use('/', main)
+app.use('/account', RouterHandler)
 
-// Create multer instance with storage configuration
-const upload = multer({ storage });
-
-// Set the view engine to EJS
-
-
-// Define a route that renders an EJS template
-app.get('/', (req, res) => {
-    const data = {
-        title: 'My Website',
-        message: 'Welcome to my website!'
-    };
-    res.render('index', data);
-});
-
-
-// Define endpoint for file upload
-app.post('/upload', upload.single('file'), (req, res) => {
-    console.log('File uploaded successfully: ' + req.file.path);
-    res.send('File uploaded successfully');
-});
-
-app.listen(3000, () => console.log('Server started on port 3000'));
+app.listen(port, () => {
+    console.log(`Listening on port ${port}`)
+})
