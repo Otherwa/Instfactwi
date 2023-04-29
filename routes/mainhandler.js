@@ -1,6 +1,5 @@
 const express = require('express')
 const router = express.Router()
-const { IgApiClient } = require('instagram-private-api');
 const { get } = require('request-promise');
 const { InstaloginSession } = require('../middleware/loginsession');
 

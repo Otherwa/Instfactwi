@@ -5,14 +5,17 @@ const express = require('express')
 const session = require('express-session');
 const mongoose = require('mongoose')
 const flash = require('connect-flash');
-const RouterHandler = require('./routes/mainhandler')
-const main = require('./routes/submainhandler')
+const AccountActions = require('./routes/mainhandler')
+const Main = require('./routes/accounthandler');
+const path = require('path')
 
 const app = express()
 const port = process.env.PORT || 4000;
 
+app.use(express.static('public'))
+
 app.use(session({
-    secret: 'mysecret',
+    secret: process.env.SECRET_KEY,
     resave: false,
     saveUninitialized: true
 }));
@@ -38,8 +41,13 @@ app.use((req, res, next) => {
 })
 
 // routes
-app.use('/', main)
-app.use('/account', RouterHandler)
+app.use('/account', Main)
+app.use('/account/actions', AccountActions)
+
+// entry points
+app.get('/', (req, res) => {
+    res.status(200).render('index', { 'title': 'Home', 'message': 'Nice' })
+})
 
 app.listen(port, () => {
     console.log(`Listening on port ${port}`)

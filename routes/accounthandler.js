@@ -2,10 +2,8 @@ const express = require('express')
 const User = require('../models/user')
 const router = express.Router()
 
-// entry points
-router.get('/', (req, res) => {
-    res.status(200).render('index', { 'title': 'Home', 'message': 'Nice' })
-})
+
+// entry point
 
 router.route('/login')
     .get((req, res) => {
