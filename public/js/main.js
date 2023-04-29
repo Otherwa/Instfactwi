@@ -24,9 +24,19 @@ let config_2 = {
     distance: '50px'
 }
 
+let config_3 = {
+    delay: 375,
+    duration: 500,
+    useDelay: 'always',
+    origin: 'bottom',
+    distance: '50px'
+}
+
+
 ScrollReveal().reveal('.reveal', config);
 ScrollReveal().reveal('.reveal-right', config_1);
 ScrollReveal().reveal('.reveal-top', config_2);
+ScrollReveal().reveal('.reveal-bottom', config_3);
 
 // burger menu
 // Burger menus

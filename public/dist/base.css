@@ -1,10 +1,5 @@
-@font-face {
-    font-family: myFirstFont;
-    src: url('../font/Bubble\ Letters.ttf');
-}
-
 #main {
-    font-family: myFirstFont;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 /* width */

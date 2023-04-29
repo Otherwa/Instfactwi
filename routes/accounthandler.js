@@ -22,7 +22,7 @@ router.route('/register')
             console.log(req.body)
             // Create a new user with the provided credentials
             const newUser = new User({
-                username: req.body.username,
+                email: req.body.email,
                 password: req.body.password,
             });
 
@@ -30,10 +30,11 @@ router.route('/register')
             await newUser.save();
 
             req.flash('success_msg', 'You are now registered and can log in');
-            res.redirect('/register')
+            res.redirect('/account/login')
         } catch (error) {
             console.error(error);
-            res.status(500).send('Unable to register user. Please try again later.');
+            req.flash('success_msg', 'Error 404');
+            res.redirect('/account/register')
         }
     })
 
