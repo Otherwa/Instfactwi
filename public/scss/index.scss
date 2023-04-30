@@ -1,0 +1,45 @@
+#main {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: rgb(194, 194, 194)
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: rgba(238, 130, 238, 0.888);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(238, 130, 238, 0.485)
+}
+
+.theme {
+    color: violet;
+    background-color: #0b074f;
+}
+
+.flex {
+    padding: auto;
+
+    div {
+        a {
+            padding: 2rem;
+        }
+    }
+}
+
+.flex {
+    nav {
+        border-style: solid;
+        border-color: aqua;
+    }
+}
