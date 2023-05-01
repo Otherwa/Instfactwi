@@ -27,19 +27,12 @@
     background-color: #0b074f;
 }
 
-.flex {
-    padding: auto;
-
-    div {
-        a {
-            padding: 2rem;
-        }
-    }
+.bor {
+    border-bottom: 2px solid aqua;
 }
 
-.flex {
-    nav {
-        border-style: solid;
-        border-color: aqua;
+nav {
+    a {
+        color: aqua;
     }
 }
