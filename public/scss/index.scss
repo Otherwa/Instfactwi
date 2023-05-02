@@ -9,17 +9,17 @@
 
 /* Track */
 ::-webkit-scrollbar-track {
-    background: rgb(194, 194, 194)
+    background: gray
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-    background: rgba(238, 130, 238, 0.888);
+    background: cyan
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-    background: rgba(238, 130, 238, 0.485)
+    background: rgba(0, 255, 255, 0.781)
 }
 
 .theme {

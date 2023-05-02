@@ -31,30 +31,28 @@ router.route('/login')
 
 router.route('/register')
     .get((req, res) => {
-        res.render('account/register');
+        res.render('account/register', { falmsg: req.flash('falmsg'), sucmsg: req.flash('sucmsg') });
     })
     .post(async (req, res) => {
-        try {
-            console.log(req.body)
-            // Create a new user with the provided credentials
-            bcrypt.genSalt(10, function (err, salt) {
-                bcrypt.hash(req.body.password, salt, function (err, hash) {
-                    const newUser = new User({
-                        email: req.body.email,
-                        password: hash,
-                    });
-                    newUser.save().then(user => {
-                        if (err) console.error(err);
-                        req.flash('success_msg', 'You are now registered and can log in');
-                        res.redirect('/account')
-                    })
+        console.log(req.body)
+        // Create a new user with the provided credentials
+        bcrypt.genSalt(10, function (err, salt) {
+            bcrypt.hash(req.body.password, salt, function (err, hash) {
+                const newUser = new User({
+                    email: req.body.email,
+                    password: hash,
+                });
+                newUser.save().then(user => {
+                    req.flash('sucmsg', 'You are now registered and can log in');
+                    res.redirect('/account/register')
+                }).catch(err => {
+                    console.log(err)
+                    req.flash('falmsg', 'This Email Already has an Account');
+                    res.redirect('/account/register')
                 })
             })
-        } catch (error) {
-            console.error(error);
-            req.flash('success_msg', 'Error 404');
-            res.redirect('/account/register')
-        }
+        })
+
     })
 
 router.route('/dashboard')

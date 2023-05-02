@@ -33,15 +33,11 @@ let config_3 = {
 }
 
 
-ScrollReveal().reveal('.reveal', config);
-ScrollReveal().reveal('.reveal-right', config_1);
-ScrollReveal().reveal('.reveal-top', config_2);
-ScrollReveal().reveal('.reveal-bottom', config_3);
+ScrollReveal().reveal('#head', config);
+ScrollReveal().reveal('#accordion-color', config_1);
 
 const button = document.querySelector('#menu-button');
 const menu = document.querySelector('#menu');
+butter.init();
 
 
-button.addEventListener('click', () => {
-    menu.classList.toggle('hidden');
-});

@@ -35,7 +35,7 @@ app.use(flash());
 
 app.use((req, res, next) => {
     console.log('Time: ', new Date().toUTCString())
-    res.locals.success_msg = req.flash('success_msg');
+    res.locals.msg = req.flash('msg');
     res.locals.error_msg = req.flash('error_msg');
     next()
 })
@@ -47,6 +47,10 @@ app.use('/account/actions', AccountActions)
 // entry points
 app.get('/', (req, res) => {
     res.status(200).render('index', { 'title': 'Home', 'message': 'Nice' })
+})
+
+app.get('*', (req, res) => {
+    res.status(200).render('err')
 })
 
 app.listen(port, () => {
