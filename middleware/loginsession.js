@@ -1,4 +1,5 @@
 const { IgApiClient } = require('instagram-private-api');
+const { EntityFactory } = require('instagram-private-api');
 const { get } = require('request-promise');
 
 const InstaloginSession = async (req, res, next) => {
@@ -7,7 +8,7 @@ const InstaloginSession = async (req, res, next) => {
         const ig = new IgApiClient();
 
         // Get user credentials from request body
-        const username = process.env.IG_USERNAME, password = process.env.IG_PASSWORD;
+        const username = req.session.user.account.ig.name, password = req.session.user.account.ig.password;
 
         // Generate a new device ID for the session
         ig.state.generateDevice(username);
@@ -26,4 +27,4 @@ const InstaloginSession = async (req, res, next) => {
     }
 };
 
-module.exports = { InstaloginSession }
+module.exports = { InstaloginSession, EntityFactory }

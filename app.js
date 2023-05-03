@@ -5,7 +5,6 @@ const express = require('express')
 const session = require('express-session');
 const mongoose = require('mongoose')
 const flash = require('connect-flash');
-const AccountActions = require('./routes/mainhandler')
 const Main = require('./routes/accounthandler');
 const path = require('path')
 
@@ -42,7 +41,7 @@ app.use((req, res, next) => {
 
 // routes
 app.use('/account', Main)
-app.use('/account/actions', AccountActions)
+
 
 // entry points
 app.get('/', (req, res) => {

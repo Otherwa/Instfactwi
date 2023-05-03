@@ -1,12 +1,15 @@
 const express = require('express')
-const { authenticateUser, requireLogin, User } = require('../models/methods/user_methods');
+const { authenticateUser, Auth, User, updateprofile } = require('../models/methods/user_methods');
 const router = express.Router()
 const bcrypt = require('bcrypt');
+const NetworkActions = require('./mainhandler')
+
 // entry point
+router.use('/network', NetworkActions)
 
 router.route('/')
     .get((req, res) => {
-        res.render('account/login');
+        res.render('account/login', { error: req.flash('error') });
     })
     .post((req, res) => {
 
@@ -16,9 +19,9 @@ router.route('/login')
     .post((req, res) => {
         // console.log(req.body)
         const { email, password } = req.body;
-        authenticateUser(email, password)
+        authenticateUser(req, email, password)
             .then(user => {
-                console.table(user);
+
                 if (user) {
                     req.session.user = user;
                     console.log(req.session)
@@ -41,6 +44,9 @@ router.route('/register')
                 const newUser = new User({
                     email: req.body.email,
                     password: hash,
+                    account: {
+                        ig: { name: null, password: null }, twt: { name: null, password: null }, fb: { name: null, password: null }
+                    }
                 });
                 newUser.save().then(user => {
                     req.flash('sucmsg', 'You are now registered and can log in');
@@ -55,10 +61,45 @@ router.route('/register')
 
     })
 
+router.route('/logout')
+    .get(Auth, (req, res) => {
+        req.session.destroy()
+        res.redirect('/account')
+        console.log(req.session)
+    })
+
 router.route('/dashboard')
-    .get(requireLogin, (req, res) => {
+    .get(Auth, (req, res) => {
         const user = req.session.user
-        res.render('account/dashboard', { user: user })
+        res.render('account/dashboard', { user: user, title: 'Dashboard' })
+    })
+
+router.route('/profile')
+    .get(Auth, (req, res) => {
+        const user = req.session.user
+        res.render('account/profile', { user: user, title: 'Profile', msg: req.flash('sucmsg') })
+    })
+    .post(Auth, (req, res) => {
+        console.log(req.body)
+        updateprofile(req, res, req.body.email, req.body.igname, req.body.igpass).then(user => {
+            req.session.user = user
+            req.flash('sucmsg', 'Profile Updated')
+            res.redirect('/account/profile');
+        });
+    })
+
+router.route('/post')
+    .get(Auth, (req, res) => {
+        const user = req.session.user
+        res.render('account/post', { user: user, title: 'Posts' })
+    })
+
+
+
+router.route('/network')
+    .get(Auth, async (req, res) => {
+        const user = req.session.user
+        res.render('account/network', { user: user, title: 'Network' })
     })
 
 module.exports = router
