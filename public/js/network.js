@@ -1,4 +1,4 @@
-const url = 'http://localhost:4000/account/network/getnetwork';
+const url = './network/getnetwork';
 
 // create an array with nodes
 

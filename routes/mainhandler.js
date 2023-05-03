@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const { get } = require('request-promise');
-const { InstaloginSession, EntityFactory } = require('../middleware/loginsession');
+const { InstaloginSession } = require('../middleware/loginsession');
 const { Auth } = require('../models/methods/user_methods');
 // middleware that is specific to this router
 router.use((req, res, next) => {
@@ -25,52 +25,63 @@ router.get('/post', InstaloginSession, async (req, res, next) => {
 
 router.route('/getnetwork')
     .post(Auth, InstaloginSession, async (req, res) => {
-        let username_stack = []
         const ig = req.ig;
-
         try {
-
-            let nodes = []
-            let edges = []
+            // Get user ID and username of the searched user
             const user = await ig.user.searchExact(req.body.name);
             const userId = user.pk;
+            const userUsername = user.username;
 
-            let followers = await ig.feed.accountFollowers(userId).request();
-            let following = await ig.feed.accountFollowing(userId).request();
+            // Get followers and following of the searched user
+            const followers = await ig.feed.accountFollowers(userId).request();
+            const following = await ig.feed.accountFollowing(userId).request();
 
+            // Get current logged in user ID and username
+            const currentUser = await ig.account.currentUser();
+            const currentUserId = currentUser.pk;
+            const currentUserUsername = currentUser.username;
 
-            // const followersArray = [...followers];
-            // const followingArray = [...following];
+            // Initialize arrays for nodes and edges
+            const nodes = [];
+            const edges = [];
 
+            // Add nodes for searched user, current user, and their mutual followers/following
+            nodes.push({ id: userId, label: userUsername, color: 'orange' }); // Searched user (orange)
+            nodes.push({ id: currentUserId, label: currentUserUsername, color: 'blue' }); // Current user (blue)
             followers.users.forEach((follower) => {
                 const id = follower.pk;
                 const label = follower.username;
-                nodes.push({ 'id': id, 'label': label });
-                edges.push({ 'from': id, 'to': userId });
+                nodes.push({ id: id, label: label, color: 'green' }); // Searched user's follower (green)
+                edges.push({ from: userId, to: id }); // Edge from searched user to follower
+                if (follower.is_private) {
+                    edges.push({ from: id, to: currentUserId, color: 'red' }); // Edge from follower to current user (red if private)
+                } else {
+                    edges.push({ from: id, to: currentUserId }); // Edge from follower to current user (black if public)
+                }
             });
-
             following.users.forEach((follow) => {
                 const id = follow.pk;
                 const label = follow.username;
-                nodes.push({ 'id': id, 'label': label });
-                edges.push({ 'from': id, 'to': userId });
+                nodes.push({ id: id, label: label, color: 'purple' }); // Searched user's following (purple)
+                edges.push({ from: id, to: userId }); // Edge from following to searched user
+                if (follow.is_private) {
+                    edges.push({ from: currentUserId, to: id, color: 'red' }); // Edge from current user to following (red if private)
+                } else {
+                    edges.push({ from: currentUserId, to: id }); // Edge from current user to following (black if public)
+                }
             });
 
-            console.log(nodes)
-            console.log(edges)
+            // Remove duplicate nodes and edges
+            const uniqueNodes = [...new Map(nodes.map((node) => [node.id, node])).values()];
+            const uniqueEdges = [...new Map(edges.map((edge) => [`${edge.from}-${edge.to}`, edge])).values()];
 
-            // res.json(followers);
-            res.status(200).json({ nodes: nodes, edges: edges });
-
+            // Send response with unique nodes and edges
+            res.status(200).json({ nodes: uniqueNodes, edges: uniqueEdges });
         } catch (error) {
-            if (error) {
-                console.log('User not found');
-            } else {
-                console.error(error);
-            }
+            console.error(error);
+            res.status(500).send('Internal Server Error');
         }
-        console.log(username_stack);
+    });
 
-    })
 
 module.exports = router
