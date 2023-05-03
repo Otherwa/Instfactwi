@@ -47,7 +47,7 @@ router.route('/getnetwork')
 
             // Add nodes for searched user, current user, and their mutual followers/following
             nodes.push({ id: userId, label: userUsername, color: 'orange' }); // Searched user (orange)
-            nodes.push({ id: currentUserId, label: currentUserUsername, color: 'blue' }); // Current user (blue)
+            nodes.push({ id: currentUserId + " (Me)", label: currentUserUsername, color: 'blue' }); // Current user (blue)
             followers.users.forEach((follower) => {
                 const id = follower.pk;
                 const label = follower.username;
