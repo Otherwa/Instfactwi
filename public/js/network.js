@@ -10,7 +10,6 @@ $('#subm').on('click', () => {
     $('#subm').prop('disabled', true);
     setTimeout(() => {
         $('#subm').prop('disabled', false);
-        $('#subm').color('#000000')
     }, 7000)
     console.log('clicked')
     const datas = {
@@ -19,7 +18,8 @@ $('#subm').on('click', () => {
 
     axios.post(url, datas)
         .then(response => {
-            $('#mynetwork').html('')
+            // $('#mynetwork').html('')
+            $('#mynetworkmsg').html(response.data.msg);
             $('#progress').css('display', 'none');
             console.log(response.data);
             let peoples = response.data.nodes

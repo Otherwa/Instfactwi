@@ -10,6 +10,14 @@ function Auth(req, res, next) {
     }
 }
 
+function Credentials(req, res, next) {
+    if (req.session.user.account.ig.name != null || req.session.user.account.ig.password != null) {
+        next()
+    } else {
+        res.redirect('/account/profile');
+    }
+}
+
 function authenticateUser(req, email, password) {
     // console.log(email, password);
     return User.findOne({ email: email })
@@ -48,4 +56,4 @@ function updateprofile(req, res, email, igname, igpass) {
             return null;
         });
 }
-module.exports = { authenticateUser, Auth, User, updateprofile }
+module.exports = { authenticateUser, Auth, User, updateprofile, Credentials }

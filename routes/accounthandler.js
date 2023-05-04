@@ -1,5 +1,5 @@
 const express = require('express')
-const { authenticateUser, Auth, User, updateprofile } = require('../models/methods/user_methods');
+const { authenticateUser, Auth, User, updateprofile, Credentials } = require('../models/methods/user_methods');
 const router = express.Router()
 const bcrypt = require('bcrypt');
 const NetworkActions = require('./mainhandler')
@@ -97,7 +97,7 @@ router.route('/post')
 
 
 router.route('/network')
-    .get(Auth, async (req, res) => {
+    .get(Auth, Credentials, async (req, res) => {
         const user = req.session.user
         res.render('account/network', { user: user, title: 'Network' })
     })

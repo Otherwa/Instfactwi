@@ -23,7 +23,7 @@ const InstaloginSession = async (req, res, next) => {
         next();
     } catch (error) {
         console.error(error);
-        res.status(401).send('Unable to log in. Please check your username and password and try again.');
+        res.status(202).json({ msg: error.message })
     }
 };
 

@@ -51,6 +51,9 @@ router.route('/getnetwork')
             nodes.push({ id: userId, label: userUsername, color: 'orange' }); // Searched user (orange)
             nodes.push({ id: currentUserId, label: currentUserUsername, color: 'blue' }); // Current user (blue)
             // hit
+
+
+
             followers.users.forEach((follower) => {
                 const id = follower.pk;
                 const label = follower.username;
@@ -66,6 +69,9 @@ router.route('/getnetwork')
                     }
                 })
             });
+
+
+
             // hit
             following.users.forEach((follower) => {
                 const id = follower.pk;
@@ -86,9 +92,9 @@ router.route('/getnetwork')
             const uniqueNodes = [...new Map(nodes.map((node) => [node.id, node])).values()];
             const uniqueEdges = [...new Map(edges.map((edge) => [`${edge.from}-${edge.to}`, edge])).values()];
             // Send response with unique nodes and edges
-            res.status(200).json({ nodes: uniqueNodes, edges: uniqueEdges });
-        } catch (error) {
-            console.error(error);
+            res.status(200).json({ nodes: uniqueNodes, edges: uniqueEdges, msg: "200 Ok" });
+        } catch (Exception) {
+            console.error(Exception);
             res.status(500).send('Internal Server Error');
         }
     });
