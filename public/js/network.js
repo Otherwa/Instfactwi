@@ -6,6 +6,12 @@ const url = './network/getnetwork';
 
 
 $('#subm').on('click', () => {
+    $('#progress').css('display', 'block');
+    $('#subm').prop('disabled', true);
+    setTimeout(() => {
+        $('#subm').prop('disabled', false);
+        $('#subm').color('#000000')
+    }, 7000)
     console.log('clicked')
     const datas = {
         name: $('#name').val()
@@ -13,44 +19,42 @@ $('#subm').on('click', () => {
 
     axios.post(url, datas)
         .then(response => {
+            $('#mynetwork').html('')
+            $('#progress').css('display', 'none');
             console.log(response.data);
-            window.alert('success');
             let peoples = response.data.nodes
             let relations = response.data.edges
 
-
             var nodes = new vis.DataSet(peoples);
-
-            // create an array with edges
             var edges = new vis.DataSet(relations);
 
             // create a network
             var container = document.getElementById('mynetwork');
-
             // provide the data in the vis format
             var data = {
                 nodes: nodes,
                 edges: edges
             };
-
             const options = {
                 autoResize: true,
+                height: '100%',
+                width: '100%',
                 edges: {
                     smooth: {
                         forceDirection: "none"
                     }
                 },
+                nodes: {
+                    shape: 'circle'
+                },
                 physics: {
                     forceAtlas2Based: {
-                        springLength: 80,
-                        springConstant: 0.27
+                        springLength: 100,
+                        springConstant: 0.01
                     },
                     minVelocity: 0.75,
                     solver: "forceAtlas2Based",
                     timestep: 0.34
-                },
-                layout: {
-                    randomSeed: undefined
                 },
                 interaction: {
                     hover: true
@@ -58,8 +62,8 @@ $('#subm').on('click', () => {
             }
 
             // initialize your network!
-            new vis.Network(container, data, options);
-
+            var network = new vis.Network(container, data, options);
+            network.startSimulation();
         })
         .catch(error => {
             console.error(error);

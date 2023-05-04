@@ -35,6 +35,9 @@ let config_3 = {
 
 ScrollReveal().reveal('#head', config);
 ScrollReveal().reveal('#accordion-color', config_1);
+ScrollReveal().reveal('#form', config);
+ScrollReveal().reveal('#network', config);
+ScrollReveal().reveal('#heading', config);
 
 const button = document.querySelector('#menu-button');
 const menu = document.querySelector('#menu');

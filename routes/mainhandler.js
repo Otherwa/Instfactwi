@@ -41,40 +41,50 @@ router.route('/getnetwork')
             const currentUserId = currentUser.pk;
             const currentUserUsername = currentUser.username;
 
+            const currentUserFollowing = await ig.feed.accountFollowing(currentUserId).request();
+            const currentUserFollowers = await ig.feed.accountFollowers(currentUserId).request();
+
             // Initialize arrays for nodes and edges
             const nodes = [];
             const edges = [];
-
             // Add nodes for searched user, current user, and their mutual followers/following
             nodes.push({ id: userId, label: userUsername, color: 'orange' }); // Searched user (orange)
-            nodes.push({ id: currentUserId + " (Me)", label: currentUserUsername, color: 'blue' }); // Current user (blue)
+            nodes.push({ id: currentUserId, label: currentUserUsername, color: 'blue' }); // Current user (blue)
+            // hit
             followers.users.forEach((follower) => {
                 const id = follower.pk;
                 const label = follower.username;
-                nodes.push({ id: id, label: label, color: 'green' }); // Searched user's follower (green)
-                edges.push({ from: userId, to: id }); // Edge from searched user to follower
-                if (follower.is_private) {
-                    edges.push({ from: id, to: currentUserId, color: 'red' }); // Edge from follower to current user (red if private)
-                } else {
-                    edges.push({ from: id, to: currentUserId }); // Edge from follower to current user (black if public)
-                }
+                currentUserFollowing.users.forEach((user) => {
+                    if (user.pk === id) {
+                        nodes.push({ id: id, label: label, color: 'green' }); // Searched user's follower (green)
+                        edges.push({ from: userId, to: id }); // Edge from searched user to follower
+                        if (follower.is_private) {
+                            edges.push({ from: id, to: currentUserId, color: 'red' }); // Edge from follower to current user (red if private)
+                        } else {
+                            edges.push({ from: id, to: currentUserId, color: 'green' }); // Edge from follower to current user (black if public)
+                        }
+                    }
+                })
             });
-            following.users.forEach((follow) => {
-                const id = follow.pk;
-                const label = follow.username;
-                nodes.push({ id: id, label: label, color: 'purple' }); // Searched user's following (purple)
-                edges.push({ from: id, to: userId }); // Edge from following to searched user
-                if (follow.is_private) {
-                    edges.push({ from: currentUserId, to: id, color: 'red' }); // Edge from current user to following (red if private)
-                } else {
-                    edges.push({ from: currentUserId, to: id }); // Edge from current user to following (black if public)
-                }
+            // hit
+            following.users.forEach((follower) => {
+                const id = follower.pk;
+                const label = follower.username;
+                currentUserFollowers.users.forEach((user) => {
+                    if (user.pk === id) {
+                        nodes.push({ id: id, label: label, color: 'green' }); // Searched user's follower (green)
+                        edges.push({ from: userId, to: id }); // Edge from searched user to follower
+                        if (follower.is_private) {
+                            edges.push({ from: id, to: currentUserId, color: 'red' }); // Edge from follower to current user (red if private)
+                        } else {
+                            edges.push({ from: id, to: currentUserId, color: 'green' }); // Edge from follower to current user (black if public)
+                        }
+                    }
+                })
             });
-
             // Remove duplicate nodes and edges
             const uniqueNodes = [...new Map(nodes.map((node) => [node.id, node])).values()];
             const uniqueEdges = [...new Map(edges.map((edge) => [`${edge.from}-${edge.to}`, edge])).values()];
-
             // Send response with unique nodes and edges
             res.status(200).json({ nodes: uniqueNodes, edges: uniqueEdges });
         } catch (error) {
