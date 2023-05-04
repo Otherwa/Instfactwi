@@ -94,8 +94,8 @@ router.route('/getnetwork')
             // Send response with unique nodes and edges
             res.status(200).json({ nodes: uniqueNodes, edges: uniqueEdges, msg: "200 Ok" });
         } catch (Exception) {
-            console.error(Exception);
-            res.status(500).send('Internal Server Error');
+            console.error(error);
+            res.status(202).json({ msg: error.message })
         }
     });
 
