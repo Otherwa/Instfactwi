@@ -73,7 +73,7 @@ router.route('/getnetwork')
                 })
             });
 
-            hit
+            // hit
             following.users.forEach((follower) => {
                 const id = follower.pk;
                 const label = follower.username;
