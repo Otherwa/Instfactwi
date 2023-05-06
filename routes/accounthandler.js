@@ -2,7 +2,9 @@ const express = require('express')
 const { authenticateUser, Auth, User, updateprofile, Credentials } = require('../models/methods/user_methods');
 const router = express.Router()
 const bcrypt = require('bcrypt');
-const NetworkActions = require('./mainhandler')
+const punycode = require('punycode');
+const NetworkActions = require('./mainhandler');
+const { InstaloginSession } = require('../middleware/loginsession');
 
 // entry point
 router.use('/network', NetworkActions)
@@ -69,19 +71,30 @@ router.route('/logout')
     })
 
 router.route('/dashboard')
-    .get(Auth, (req, res) => {
+    .get(Auth, Credentials, (req, res) => {
         const user = req.session.user
-        res.render('account/dashboard', { user: user, title: 'Dashboard' })
+        res.render('account/dashboard', { title: 'Dashboard', user: user })
+    })
+    .put(Auth, Credentials, InstaloginSession, (req, res) => {
+        const details = req.account_content
+        res.json({ details: details })
     })
 
 router.route('/profile')
-    .get(Auth, (req, res) => {
-        const user = req.session.user
+    .get(Auth, Credentials, (req, res) => {
+        const user = req.session
+        req.session.email = req.session.user.email
+        req.session.name = punycode.decode(req.session.user.account.ig.name)
+        req.session.password = punycode.decode(req.session.user.account.ig.password)
+        console.log(req.session.user)
         res.render('account/profile', { user: user, title: 'Profile', msg: req.flash('sucmsg') })
     })
-    .post(Auth, (req, res) => {
+    .post(Auth, Credentials, (req, res) => {
         console.log(req.body)
-        updateprofile(req, res, req.body.email, req.body.igname, req.body.igpass).then(user => {
+        let { email, igname, igpass } = req.body
+        igname = punycode.encode(igname)
+        igpass = punycode.encode(igpass)
+        updateprofile(req, res, email, igname, igpass).then(user => {
             req.session.user = user
             req.flash('sucmsg', 'Profile Updated')
             res.redirect('/account/profile');
@@ -89,7 +102,7 @@ router.route('/profile')
     })
 
 router.route('/post')
-    .get(Auth, (req, res) => {
+    .get(Auth, Credentials, (req, res) => {
         const user = req.session.user
         res.render('account/post', { user: user, title: 'Posts' })
     })

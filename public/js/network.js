@@ -1,10 +1,6 @@
 const url = './network/getnetwork';
 
 // create an array with nodes
-
-
-
-
 $('#subm').on('click', () => {
     $('#progress').css('display', 'block');
     $('#subm').prop('disabled', true);
@@ -18,7 +14,7 @@ $('#subm').on('click', () => {
 
     axios.post(url, datas)
         .then(response => {
-            // $('#mynetwork').html('')
+            $('#mynetwork').html('')
             $('#mynetworkmsg').html(response.data.msg);
             $('#progress').css('display', 'none');
             console.log(response.data);

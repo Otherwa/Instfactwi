@@ -93,7 +93,7 @@ router.route('/getnetwork')
             const uniqueEdges = [...new Map(edges.map((edge) => [`${edge.from}-${edge.to}`, edge])).values()];
             // Send response with unique nodes and edges
             res.status(200).json({ nodes: uniqueNodes, edges: uniqueEdges, msg: "200 Ok" });
-        } catch (Exception) {
+        } catch (error) {
             console.error(error);
             res.status(202).json({ msg: error.message })
         }
