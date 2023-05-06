@@ -81,7 +81,7 @@ router.route('/dashboard')
     })
 
 router.route('/profile')
-    .get(Auth, Credentials, (req, res) => {
+    .get(Auth, (req, res) => {
         const user = req.session
         req.session.email = req.session.user.email
         req.session.name = punycode.decode(req.session.user.account.ig.name)

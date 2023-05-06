@@ -45,19 +45,22 @@ router.route('/getnetwork')
             const currentUserFollowers = await ig.feed.accountFollowers(currentUserId).request();
 
             // Initialize arrays for nodes and edges
-            const nodes = [];
-            const edges = [];
+            var nodes = [];
+            var edges = [];
+            var non_nodes = [];
             // Add nodes for searched user, current user, and their mutual followers/following
             nodes.push({ id: userId, label: userUsername, color: 'orange' }); // Searched user (orange)
-            nodes.push({ id: currentUserId, label: currentUserUsername, color: 'blue' }); // Current user (blue)
+            nodes.push({ id: currentUserId, label: currentUserUsername, color: 'orange' }); // Current user (blue)
             // hit
-
+            non_nodes.push({ id: userId, label: userUsername, color: 'orange' }); // Searched user (orange)
+            non_nodes.push({ id: currentUserId, label: currentUserUsername, color: 'orange' });
 
 
             followers.users.forEach((follower) => {
                 const id = follower.pk;
                 const label = follower.username;
                 currentUserFollowing.users.forEach((user) => {
+                    non_nodes.push({ id: id, label: label, color: 'red' });
                     if (user.pk === id) {
                         nodes.push({ id: id, label: label, color: 'green' }); // Searched user's follower (green)
                         edges.push({ from: userId, to: id }); // Edge from searched user to follower
@@ -70,9 +73,7 @@ router.route('/getnetwork')
                 })
             });
 
-
-
-            // hit
+            hit
             following.users.forEach((follower) => {
                 const id = follower.pk;
                 const label = follower.username;
@@ -88,9 +89,25 @@ router.route('/getnetwork')
                     }
                 })
             });
+
+            var nonuniqueNodes = [...new Map(non_nodes.map((node) => [node.id, node])).values()];
             // Remove duplicate nodes and edges
-            const uniqueNodes = [...new Map(nodes.map((node) => [node.id, node])).values()];
-            const uniqueEdges = [...new Map(edges.map((edge) => [`${edge.from}-${edge.to}`, edge])).values()];
+
+            var uniqueNodes = [...new Map(nodes.map((node) => [node.id, node])).values()];
+            var uniqueEdges = [...new Map(edges.map((edge) => [`${edge.from}-${edge.to}`, edge])).values()];
+
+            var nonodes = nonuniqueNodes.filter(function (objFromA) {
+                return !uniqueNodes.find(function (objFromB) {
+                    return objFromA.id === objFromB.id
+                })
+            })
+
+            var noNodes = [...new Map(nonodes.map((node) => [node.id, node])).values()]
+
+            noNodes.forEach(node => {
+                uniqueNodes.push(node)
+            })
+
             // Send response with unique nodes and edges
             res.status(200).json({ nodes: uniqueNodes, edges: uniqueEdges, msg: "200 Ok" });
         } catch (error) {

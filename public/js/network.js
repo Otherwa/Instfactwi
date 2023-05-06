@@ -53,6 +53,8 @@ $('#subm').on('click', () => {
                     timestep: 0.34
                 },
                 interaction: {
+                    navigationButtons: true,
+                    keyboard: true,
                     hover: true
                 }
             }
