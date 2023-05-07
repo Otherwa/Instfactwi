@@ -84,10 +84,9 @@ router.route('/profile')
     .get(Auth, (req, res) => {
         const user = req.session
         req.session.email = req.session.user.email
-        if (req.session.user.account.ig.name) {
-            req.session.name = punycode.decode(req.session.user.account.ig.name)
-            req.session.password = punycode.decode(req.session.user.account.ig.password)
-        }
+
+        req.session.name = punycode.decode(req.session.user.account.ig.name) || " "
+        req.session.password = punycode.decode(req.session.user.account.ig.password) || " "
         console.log(req.session.user)
         res.render('account/profile', { user: user, title: 'Profile', msg: req.flash('sucmsg') })
     })
