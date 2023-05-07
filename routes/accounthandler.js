@@ -91,12 +91,10 @@ router.route('/profile')
         console.log(req.session.user)
         res.render('account/profile', { user: user, title: 'Profile', msg: req.flash('sucmsg') })
     })
-    .post(Auth, Credentials, (req, res) => {
-        console.log(req.body)
-        let { email, igname, igpass } = req.body
-        igname = punycode.encode(igname)
-        igpass = punycode.encode(igpass)
-        updateprofile(req, res, email, igname, igpass).then(user => {
+    .post(Auth, (req, res) => {
+        igname = punycode.encode(req.body.igname)
+        igpass = punycode.encode(req.body.igpass)
+        updateprofile(req, res, req.body.email, igname, igpass).then(user => {
             req.session.user = user
             req.flash('sucmsg', 'Profile Updated')
             res.redirect('/account/profile');
