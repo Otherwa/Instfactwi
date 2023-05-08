@@ -6,7 +6,6 @@ const session = require('express-session');
 const mongoose = require('mongoose')
 const flash = require('connect-flash');
 const Main = require('./routes/accounthandler');
-const path = require('path')
 
 const app = express()
 const port = process.env.PORT || 4000;

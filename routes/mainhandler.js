@@ -33,41 +33,65 @@ router.route('/getnetwork')
             const userUsername = user.username;
 
             // Get followers and following of the searched user
-            const followers = await ig.feed.accountFollowers(userId).request();
-            const following = await ig.feed.accountFollowing(userId).request();
+            var followers = await ig.feed.accountFollowers(userId).request();
+            while (ig.feed.accountFollowers(userId).isMoreAvailable()) {
+                await new Promise(resolve => setTimeout(resolve, 5000));
+                const nextFollowers = await ig.feed.accountFollowers(userId).request();
+                followers = followers.concat(nextFollowers);
+            }
+
+            var following = await ig.feed.accountFollowing(userId).request();
+            while (ig.feed.accountFollowing(userId).isMoreAvailable()) {
+                await new Promise(resolve => setTimeout(resolve, 5000));
+                const nextFolloweing = await ig.feed.accountFollowing(userId).request();
+                following = followers.concat(nextFolloweing);
+            }
 
             // Get current logged in user ID and username
             const currentUser = await ig.account.currentUser();
             const currentUserId = currentUser.pk;
             const currentUserUsername = currentUser.username;
 
-            const currentUserFollowing = await ig.feed.accountFollowing(currentUserId).request();
-            const currentUserFollowers = await ig.feed.accountFollowers(currentUserId).request();
+            // Get followers and following of the searched user
+            var currentUserFollowers = await ig.feed.accountFollowers(currentUserId).request();
+            while (ig.feed.accountFollowers(currentUserId).isMoreAvailable()) {
+                await new Promise(resolve => setTimeout(resolve, 5000));
+                const nextFollowers = await ig.feed.accountFollowers(currentUserId).request();
+                currentUserFollowers = currentUserFollowers.concat(nextFollowers);
+            }
+
+
+            var currentUserFollowing = await ig.feed.accountFollowing(currentUserId).request();
+            while (ig.feed.accountFollowing(currentUserId).isMoreAvailable()) {
+                await new Promise(resolve => setTimeout(resolve, 5000));
+                const nextFolloweing = await ig.feed.accountFollowing(currentUserId).request();
+                currentUserFollowing = currentUserFollowing.concat(nextFolloweing);
+            }
 
             // Initialize arrays for nodes and edges
             var nodes = [];
             var edges = [];
             var non_nodes = [];
             // Add nodes for searched user, current user, and their mutual followers/following
-            nodes.push({ id: userId, label: userUsername, color: 'orange' }); // Searched user (orange)
-            nodes.push({ id: currentUserId, label: currentUserUsername, color: 'orange' }); // Current user (blue)
+            nodes.push({ id: userId, label: userUsername, color: '#FFE74C' }); // Searched user (#FFE74C)
+            nodes.push({ id: currentUserId, label: currentUserUsername, color: '#FFE74C' }); // Current user (blue)
             // hit
-            non_nodes.push({ id: userId, label: userUsername, color: 'orange' }); // Searched user (orange)
-            non_nodes.push({ id: currentUserId, label: currentUserUsername, color: 'orange' });
+            non_nodes.push({ id: userId, label: userUsername, color: '#FFE74C' }); // Searched user (#FFE74C)
+            non_nodes.push({ id: currentUserId, label: currentUserUsername, color: '#FFE74C' });
 
 
             followers.users.forEach((follower) => {
                 const id = follower.pk;
                 const label = follower.username;
                 currentUserFollowing.users.forEach((user) => {
-                    non_nodes.push({ id: id, label: label, color: 'red' });
+                    non_nodes.push({ id: id, label: label, color: '#D72638' });
                     if (user.pk === id) {
-                        nodes.push({ id: id, label: label, color: 'green' }); // Searched user's follower (green)
+                        nodes.push({ id: id, label: label, color: '#6BF178' }); // Searched user's follower (#6BF178)
                         edges.push({ from: userId, to: id }); // Edge from searched user to follower
                         if (follower.is_private) {
-                            edges.push({ from: id, to: currentUserId, color: 'red' }); // Edge from follower to current user (red if private)
+                            edges.push({ from: id, to: currentUserId, color: '#D72638' }); // Edge from follower to current user (#D72638 if private)
                         } else {
-                            edges.push({ from: id, to: currentUserId, color: 'green' }); // Edge from follower to current user (black if public)
+                            edges.push({ from: id, to: currentUserId, color: '#6BF178' }); // Edge from follower to current user (black if public)
                         }
                     }
                 })
@@ -79,12 +103,12 @@ router.route('/getnetwork')
                 const label = follower.username;
                 currentUserFollowers.users.forEach((user) => {
                     if (user.pk === id) {
-                        nodes.push({ id: id, label: label, color: 'green' }); // Searched user's follower (green)
+                        nodes.push({ id: id, label: label, color: '#6BF178' }); // Searched user's follower (#6BF178)
                         edges.push({ from: userId, to: id }); // Edge from searched user to follower
                         if (follower.is_private) {
-                            edges.push({ from: id, to: currentUserId, color: 'red' }); // Edge from follower to current user (red if private)
+                            edges.push({ from: id, to: currentUserId, color: '#D72638' }); // Edge from follower to current user (#D72638 if private)
                         } else {
-                            edges.push({ from: id, to: currentUserId, color: 'green' }); // Edge from follower to current user (black if public)
+                            edges.push({ from: id, to: currentUserId, color: '#6BF178' }); // Edge from follower to current user (black if public)
                         }
                     }
                 })
